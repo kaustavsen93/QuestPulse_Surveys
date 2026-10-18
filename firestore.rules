@@ -1,0 +1,10 @@
+rules_version = '2';
+// Only the QuestPulse server reads and writes Firestore. It uses its own Google Cloud service account,
+// which these rules don't apply to, so every direct request from a browser or app is refused.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

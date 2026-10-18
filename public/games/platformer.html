@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Platformer Survey</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,800;1,400&family=Silkscreen&display=swap" rel="stylesheet">
+<style>
+:root{
+  --head-font:"Silkscreen",monospace; --body-font:"Nunito",system-ui,sans-serif; --on-accent:#FFFFFF;
+  --bg:#EAF0F8; --bg-dot:#DCE4F0; --on-bg:#1D1D2B; --on-bg-soft:#4C4F66;
+  --panel:#FFFFFF; --ink:#1D1D2B; --ink-soft:#4C4F66; --tint:#EEF2FB; --line:#DADFEA;
+  --go:#2853B8; --star:#F2B33D; --star-off:#C3CAD9; --focus:#C2410C;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){ --bg:#12141D; --bg-dot:#1B1E2B; --on-bg:#EEF0F7; --on-bg-soft:#B9BED2; --star-off:#4A5068; --focus:#FFB020; }
+}
+:root[data-theme="dark"]{ --bg:#12141D; --bg-dot:#1B1E2B; --on-bg:#EEF0F7; --on-bg-soft:#B9BED2; --star-off:#4A5068; --focus:#FFB020; }
+html{height:100%;}
+[hidden]{display:none !important;}
+*,*::before,*::after{box-sizing:inherit;}
+/* Business setting: wallpaper and colours from core/scenes.js */
+:root[data-setting]{ --bg:var(--set-bg-now); --bg-dot:var(--set-dot-now); }
+/* Whole-game colour palette picked in the Game Editor (core/scenes.js); the level takes the palette's colours in platformer.js */
+:root[data-palette]{ --bg:var(--pal-bg-now); --bg-dot:var(--pal-dot-now); --on-bg:var(--pal-on-bg-now); --on-bg-soft:var(--pal-on-bg-now);
+  --panel:var(--pal-surface); --ink:var(--pal-ink); --ink-soft:var(--pal-ink-soft); --tint:var(--pal-tint); --line:var(--pal-line);
+  --go:var(--pal-accent); --on-accent:var(--pal-on-accent); }
+body{margin:0; min-height:100%; background-color:var(--bg); background-image:radial-gradient(var(--bg-dot) 2px, transparent 2.5px); background-size:24px 24px;
+  color:var(--on-bg); font-family:var(--body-font); font-size:17px; line-height:1.55;}
+.wrap{max-width:1040px; margin:0 auto; padding:18px 16px 40px;}
+.top{display:flex; flex-wrap:wrap; justify-content:space-between; align-items:flex-end; gap:8px 16px; margin-bottom:12px;}
+.top .company{font-size:15px; color:var(--on-bg-soft);}
+.top h1{font-family:var(--head-font); font-weight:400; font-size:clamp(26px,6vw,40px); line-height:1.05; margin:2px 0 0;}
+.hud{display:flex; align-items:center; gap:10px;}
+.hud .level{font-family:var(--head-font); font-size:15px; color:var(--on-bg-soft);}
+.starbar{list-style:none; margin:0; padding:0; display:flex; gap:4px;}
+.starbar svg{width:24px; height:24px; display:block;}
+.starbar .on path{fill:var(--star); stroke:var(--ink);}
+.starbar .off path{fill:var(--star-off); stroke:var(--star-off);}
+.starbar .fresh{animation:pop .5s ease-out;}
+@keyframes pop{0%{transform:scale(.3);} 60%{transform:scale(1.35);} 100%{transform:none;}}
+
+.game{position:relative; height:clamp(400px,62vh,500px); border:3px solid var(--ink); border-radius:14px; overflow:hidden; background:#9ED8FF; box-shadow:0 6px 0 var(--ink);}
+canvas{display:block; width:100%; height:100%; touch-action:none;}
+canvas:focus-visible{outline:4px solid var(--focus); outline-offset:-4px;}
+.overlay{position:absolute; inset:0; display:grid; place-items:center; padding:12px; background:rgba(20,22,35,.35); overflow:auto;}
+.overlay[hidden]{display:none;}
+.panel{width:min(100%,600px); max-height:100%; overflow:auto; background:var(--panel); color:var(--ink); border:3px solid var(--ink); border-radius:14px; padding:20px 18px 20px; box-shadow:0 6px 0 var(--ink);}
+.tag{margin:0; font-size:14px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-soft);}
+.panel h2{font-family:var(--head-font); font-weight:400; font-size:clamp(20px,5vw,26px); line-height:1.15; margin:4px 0 12px;}
+.prompt{font-size:20px; font-weight:800; line-height:1.4; margin:0 0 14px;}
+.panel p{max-width:62ch;}
+.who{display:flex; gap:14px; align-items:flex-end; margin-bottom:10px;}
+.who canvas{flex:none; width:84px; height:98px;}
+.who b{display:block; font-family:var(--head-font); font-weight:400; font-size:22px; line-height:1.1;}
+.who span{color:var(--ink-soft); font-size:15px;}
+.quip{font-style:italic;}
+.cheer{display:flex; gap:12px; align-items:center; padding:12px 14px; border-radius:10px; background:var(--tint); margin:4px 0 8px;}
+.cheer svg{flex:none; width:44px; height:44px;}
+.cheer p{margin:0;}
+
+.opts{display:grid; gap:10px;}
+.scale{display:flex; flex-wrap:wrap; gap:8px;}
+.scale-labels{display:flex; justify-content:space-between; gap:12px; font-size:15px; color:var(--ink-soft); margin-top:6px;}
+button{font:inherit; color:inherit; cursor:pointer;}
+.opt,.scale button{background:#FFFFFF; border:3px solid var(--ink); border-radius:10px; padding:9px 14px; text-align:left; font-weight:600; box-shadow:0 3px 0 var(--ink);}
+.scale button{width:46px; height:46px; padding:0; text-align:center; font-weight:800;}
+.opt:hover,.scale button:hover{background:var(--tint);}
+.opt:active,.scale button:active{transform:translateY(2px); box-shadow:0 1px 0 var(--ink);}
+.opt[aria-pressed="true"],.scale button[aria-pressed="true"]{background:var(--go); color:var(--on-accent);}
+textarea{width:100%; min-height:100px; font:inherit; color:var(--ink); background:#FFFFFF; border:3px solid var(--ink); border-radius:10px; padding:10px;}
+.actions{display:flex; gap:12px; flex-wrap:wrap; margin-top:16px; align-items:center;}
+.primary{font-family:var(--head-font); font-size:17px; background:var(--go); color:var(--on-accent); border:3px solid var(--ink); border-radius:10px; padding:10px 20px; box-shadow:0 4px 0 var(--ink);}
+.primary:active{transform:translateY(3px); box-shadow:0 1px 0 var(--ink);}
+.primary:disabled{opacity:.45; cursor:not-allowed;}
+.ghost{background:none; border:none; text-decoration:underline; padding:8px 4px; color:var(--ink-soft);}
+:focus-visible{outline:3px solid var(--focus); outline-offset:3px;}
+[tabindex="-1"]:focus{outline:none;}
+.panel :focus-visible{outline-color:#C2410C;}
+:root[data-palette] .panel :focus-visible{outline-color:var(--pal-accent);}
+
+.controls{display:flex; justify-content:space-between; align-items:center; gap:12px; margin-top:16px;}
+.pad{display:flex; gap:10px;}
+.ctl{width:64px; height:56px; display:grid; place-items:center; background:var(--panel); color:var(--ink); border:3px solid var(--ink); border-radius:12px; box-shadow:0 4px 0 var(--ink); font-size:22px; font-weight:800; touch-action:none; user-select:none; -webkit-user-select:none;}
+.ctl.jump{width:auto; padding:0 26px; background:var(--go); color:var(--on-accent); font-family:var(--head-font); font-size:18px;}
+.ctl.on,.ctl:active{transform:translateY(3px); box-shadow:0 1px 0 var(--ink);}
+.ctl:disabled{opacity:.4;}
+.ctl svg{width:24px; height:24px;}
+.assist{display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:8px 16px; margin-top:12px;}
+.skip{background:none; border:2px solid var(--on-bg); color:var(--on-bg); border-radius:999px; padding:8px 16px; font-weight:800;}
+.skip:disabled{opacity:.4; cursor:not-allowed;}
+.help{margin:0; font-size:15px; color:var(--on-bg-soft);}
+/* Touch screens: platformer.js moves the controls and Skip onto the level, and the level fits the screen, so playing never needs a scroll. */
+.touch .game{height:min(clamp(400px,62vh,500px), calc(100dvh - 24px));}
+.touch .game .overlay{z-index:2;}
+.touch .game .controls{position:absolute; left:12px; right:12px; bottom:12px; margin:0; z-index:1; pointer-events:none;}
+.touch .game .ctl{pointer-events:auto; opacity:.92;}
+.touch .game .ctl:disabled{opacity:.35;}
+.touch .game .skip{position:absolute; top:10px; right:10px; z-index:1; background:var(--panel); color:var(--ink); border-color:var(--ink); padding:6px 14px; font-size:15px;}
+.touch #help{display:none;}
+.after{margin-top:18px;}
+.after .panel{width:100%; max-height:none;}
+.after h2{font-size:clamp(24px,6vw,34px);}
+.summary{margin:16px 0 0; padding:0; list-style:none;}
+.summary li{padding:8px 0; border-bottom:1px solid var(--line);}
+.summary small{display:block; color:var(--ink-soft); font-size:15px;}
+details{margin-top:14px;}
+summary{cursor:pointer; font-weight:800;}
+pre{overflow-x:auto; background:var(--tint); padding:12px; font-size:13px; border-radius:8px; white-space:pre;}
+.sr-only{position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;}
+@media (prefers-reduced-motion: reduce){ *{animation:none !important; transition:none !important;} }
+</style>
+<link rel="stylesheet" href="core/scenes.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <div class="company" id="company"></div>
+      <h1 id="title"></h1>
+    </div>
+    <div class="hud"><span class="level" id="levelName"></span><ol class="starbar" id="stars"></ol></div>
+  </header>
+  <section class="game" id="game" aria-label="Level">
+    <canvas id="canvas" tabindex="0" role="application" aria-roledescription="game"></canvas>
+    <div class="overlay" id="overlay" hidden><div class="panel" id="panel" role="dialog" aria-modal="true" aria-labelledby="panelTitle"></div></div>
+  </section>
+  <div class="controls" id="controls">
+    <div class="pad">
+      <button class="ctl" data-key="left" aria-label="Run left"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4L7 12l8 8" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <button class="ctl" data-key="right" aria-label="Run right"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4l8 8-8 8" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    </div>
+    <button class="ctl jump" data-key="jump" id="jumpBtn">Jump</button>
+  </div>
+  <div class="assist" id="assist">
+    <button class="skip" id="skipRun">Skip the running</button>
+    <p class="help" id="help">Arrow keys or A and D to run. Space or W to jump.</p>
+  </div>
+  <div class="after" id="after"></div>
+  <p class="sr-only" id="announce" aria-live="polite"></p>
+</div>
+
+<script src="core/firebase-config.js"></script>
+<script src="core/validators.js"></script>
+<script src="core/qp.js"></script>
+<script src="core/i18n.js"></script>
+<script src="core/firestore.js"></script>
+<script src="core/rewards.js"></script>
+<script src="core/voice.js"></script>
+<script src="core/scenes.js"></script>
+<script src="core/banners.js"></script>
+<script src="samples/platformer.js"></script>
+<script src="platformer.js"></script>
+</body>
+</html>

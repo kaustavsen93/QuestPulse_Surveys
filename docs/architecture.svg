@@ -1,0 +1,125 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="780" viewBox="0 0 1200 780" font-family="Inter, 'Helvetica Neue', Arial, sans-serif">
+  <title>QuestPulse architecture</title>
+  <desc>Businesses and players use browsers that reach one Cloud Run service running the Express server. It stores data in Firestore, reads secrets from Secret Manager and calls the Gemini API. SMTP email for password resets is built but switched off. Deploys go from a developer machine through Cloud Build and Artifact Registry; GitHub holds the code.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="#5F5E5A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="780" fill="#FFFFFF"/>
+
+  <text x="40" y="48" font-size="26" font-weight="700" fill="#18181B">QuestPulse architecture</text>
+  <text x="40" y="74" font-size="14" fill="#5F5E5A">Live on Google Cloud Run · https://questpulse-1058421709387.us-central1.run.app</text>
+
+  <!-- Google Cloud project -->
+  <rect x="320" y="100" width="580" height="630" rx="18" fill="#FAFAF8" stroke="#B4B2A9" stroke-width="1" stroke-dasharray="6 5"/>
+  <text x="340" y="716" font-size="13" fill="#5F5E5A">Google Cloud project questpulse-o89zcj · us-central1</text>
+
+  <!-- Users -->
+  <rect x="40" y="124" width="220" height="96" rx="10" fill="#F1EFE8" stroke="#888780"/>
+  <text x="58" y="154" font-size="16" font-weight="700" fill="#2C2C2A">Businesses</text>
+  <text x="58" y="178" font-size="13" fill="#5F5E5A">Browser: builder, Game Editor,</text>
+  <text x="58" y="198" font-size="13" fill="#5F5E5A">dashboard and analytics</text>
+
+  <rect x="40" y="254" width="220" height="96" rx="10" fill="#F1EFE8" stroke="#888780"/>
+  <text x="58" y="284" font-size="16" font-weight="700" fill="#2C2C2A">Players</text>
+  <text x="58" y="308" font-size="13" fill="#5F5E5A">Browser: games at /s/ links,</text>
+  <text x="58" y="328" font-size="13" fill="#5F5E5A">and My coupons</text>
+
+  <line x1="260" y1="172" x2="348" y2="172" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="260" y1="302" x2="348" y2="302" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="270" y="162" font-size="12" fill="#5F5E5A">HTTPS</text>
+  <text x="270" y="292" font-size="12" fill="#5F5E5A">HTTPS</text>
+
+  <!-- Cloud Run -->
+  <rect x="350" y="124" width="520" height="290" rx="12" fill="#EEEDFE" stroke="#534AB7"/>
+  <text x="370" y="154" font-size="17" font-weight="700" fill="#26215C">Cloud Run service: questpulse</text>
+  <text x="370" y="176" font-size="13" fill="#3C3489">Node.js Express server · at most 1 instance · sleeps when idle</text>
+
+  <rect x="370" y="192" width="480" height="36" rx="7" fill="#FFFFFF" stroke="#AFA9EC"/>
+  <text x="386" y="215" font-size="13" font-weight="700" fill="#26215C">Pages</text>
+  <text x="472" y="215" font-size="13" fill="#3C3489">Builder, dashboard, analytics and the four games</text>
+
+  <rect x="370" y="234" width="480" height="36" rx="7" fill="#FFFFFF" stroke="#AFA9EC"/>
+  <text x="386" y="257" font-size="13" font-weight="700" fill="#26215C">Accounts</text>
+  <text x="472" y="257" font-size="13" fill="#3C3489">Sign-up, log-in, password reset, roles</text>
+
+  <rect x="370" y="276" width="480" height="36" rx="7" fill="#FFFFFF" stroke="#AFA9EC"/>
+  <text x="386" y="299" font-size="13" font-weight="700" fill="#26215C">AI</text>
+  <text x="472" y="299" font-size="13" fill="#3C3489">Writes games, new questions, type changes, summaries</text>
+
+  <rect x="370" y="318" width="480" height="36" rx="7" fill="#FFFFFF" stroke="#AFA9EC"/>
+  <text x="386" y="341" font-size="13" font-weight="700" fill="#26215C">Surveys</text>
+  <text x="472" y="341" font-size="13" fill="#3C3489">Drafts, publishing, responses, deleting</text>
+
+  <rect x="370" y="360" width="480" height="36" rx="7" fill="#FFFFFF" stroke="#AFA9EC"/>
+  <text x="386" y="383" font-size="13" font-weight="700" fill="#26215C">Coupons</text>
+  <text x="472" y="383" font-size="13" fill="#3C3489">Issued on finishing, saved by players, redeemed</text>
+
+  <!-- Data -->
+  <line x1="475" y1="414" x2="475" y2="442" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="745" y1="414" x2="745" y2="442" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <rect x="350" y="444" width="250" height="134" rx="10" fill="#E1F5EE" stroke="#0F6E56"/>
+  <text x="366" y="472" font-size="16" font-weight="700" fill="#04342C">Firestore</text>
+  <text x="366" y="494" font-size="13" fill="#085041">Default database (free tier)</text>
+  <text x="366" y="520" font-size="13" fill="#085041">users · sessions · surveys</text>
+  <text x="366" y="540" font-size="13" fill="#085041">responses · coupons</text>
+  <text x="366" y="560" font-size="13" fill="#085041">passwordResets</text>
+
+  <rect x="620" y="444" width="250" height="134" rx="10" fill="#E1F5EE" stroke="#0F6E56"/>
+  <text x="636" y="472" font-size="16" font-weight="700" fill="#04342C">Secret Manager</text>
+  <text x="636" y="494" font-size="13" fill="#085041">Read by Cloud Run at start</text>
+  <text x="636" y="520" font-size="13" fill="#085041" font-family="'IBM Plex Mono', Menlo, monospace">GEMINI_API_KEY</text>
+  <text x="636" y="540" font-size="13" fill="#085041" font-family="'IBM Plex Mono', Menlo, monospace">PLAY_TOKEN_SECRET</text>
+
+  <!-- Deploy path -->
+  <rect x="350" y="606" width="250" height="84" rx="10" fill="#FAEEDA" stroke="#854F0B"/>
+  <text x="366" y="636" font-size="16" font-weight="700" fill="#412402">Cloud Build</text>
+  <text x="366" y="660" font-size="13" fill="#633806">Builds each deploy</text>
+
+  <rect x="620" y="606" width="250" height="84" rx="10" fill="#FAEEDA" stroke="#854F0B"/>
+  <text x="636" y="636" font-size="16" font-weight="700" fill="#412402">Artifact Registry</text>
+  <text x="636" y="660" font-size="13" fill="#633806">Keeps the latest build,</text>
+  <text x="636" y="678" font-size="13" fill="#633806">which Cloud Run runs</text>
+
+  <line x1="600" y1="648" x2="618" y2="648" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <rect x="40" y="484" width="220" height="84" rx="10" fill="#F1EFE8" stroke="#888780"/>
+  <text x="58" y="512" font-size="16" font-weight="700" fill="#2C2C2A">GitHub</text>
+  <text x="58" y="534" font-size="13" fill="#5F5E5A">kaustavsen93/questpulse</text>
+  <text x="58" y="554" font-size="13" fill="#5F5E5A">Code only, no auto-deploy</text>
+
+  <rect x="40" y="606" width="220" height="84" rx="10" fill="#FAEEDA" stroke="#854F0B"/>
+  <text x="58" y="636" font-size="16" font-weight="700" fill="#412402">Developer machine</text>
+  <text x="58" y="660" font-size="13" fill="#633806" font-family="'IBM Plex Mono', Menlo, monospace">gcloud run deploy</text>
+
+  <line x1="150" y1="606" x2="150" y2="570" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="160" y="592" font-size="12" fill="#5F5E5A">git push</text>
+  <line x1="260" y1="648" x2="348" y2="648" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="270" y="638" font-size="12" fill="#5F5E5A">upload</text>
+
+  <!-- Outside services -->
+  <line x1="870" y1="172" x2="948" y2="172" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="870" y1="282" x2="948" y2="282" stroke="#5F5E5A" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#arrow)"/>
+
+  <rect x="950" y="132" width="210" height="80" rx="10" fill="#F1EFE8" stroke="#888780"/>
+  <text x="966" y="160" font-size="16" font-weight="700" fill="#2C2C2A">Gemini API</text>
+  <text x="966" y="182" font-size="13" fill="#5F5E5A">Gemini, Gemma as backup</text>
+  <text x="966" y="200" font-size="13" fill="#5F5E5A">Key from AI Studio</text>
+
+  <rect x="950" y="242" width="210" height="80" rx="10" fill="#FFFFFF" stroke="#888780" stroke-dasharray="5 4"/>
+  <text x="966" y="270" font-size="16" font-weight="700" fill="#2C2C2A">Email (SMTP)</text>
+  <text x="966" y="292" font-size="13" fill="#5F5E5A">Password-reset links</text>
+  <text x="966" y="310" font-size="13" fill="#5F5E5A">Needs an app password</text>
+
+  <!-- Legend -->
+  <text x="950" y="610" font-size="13" font-weight="700" fill="#2C2C2A">Key</text>
+  <line x1="950" y1="634" x2="990" y2="634" stroke="#5F5E5A" stroke-width="1.5"/>
+  <text x="1000" y="638" font-size="13" fill="#5F5E5A">Live</text>
+  <line x1="950" y1="660" x2="990" y2="660" stroke="#5F5E5A" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <text x="1000" y="664" font-size="13" fill="#5F5E5A">Built, switched off</text>
+  <rect x="950" y="678" width="14" height="14" rx="3" fill="#FAEEDA" stroke="#854F0B"/>
+  <text x="972" y="690" font-size="13" fill="#5F5E5A">Deploy path</text>
+</svg>

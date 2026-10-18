@@ -1,0 +1,99 @@
+{
+  "id": "brightline-summit-2026",
+  "title": "The Summit Spotlight",
+  "company": "Brightline Summit 2026",
+  "host": {
+    "name": "Marlowe Quinn",
+    "catchphrase": "Lights up, voices on!",
+    "introLine": "Good evening and welcome to the show! I'm Marlowe Quinn, and tonight the only thing that counts is taking part.",
+    "look": {
+      "suitColor": "#2C3E73",
+      "accentColor": "#E8553D",
+      "skinTone": "#8D5A3B",
+      "hair": "quiff",
+      "accessory": "microphone"
+    }
+  },
+  "show": {
+    "name": "Spotlight Live",
+    "palette": "electric"
+  },
+  "intro": [
+    "Six quick rounds about your time at Brightline Summit.",
+    "Every answer earns the same points. There are no right or wrong answers, and your responses are anonymous."
+  ],
+  "questions": [
+    {
+      "id": "q1",
+      "type": "rating",
+      "scale": 5,
+      "labels": [
+        "Very difficult",
+        "Very easy"
+      ],
+      "roundTitle": "The Arrival Round",
+      "hostLine": "We start where every summit starts: the front door and the badge desk.",
+      "prompt": "How easy was it to register and check in?"
+    },
+    {
+      "id": "q2",
+      "type": "rating",
+      "scale": 5,
+      "labels": [
+        "Not at all useful",
+        "Extremely useful"
+      ],
+      "roundTitle": "Main Stage Moments",
+      "hostLine": "Next up, the big room. Keynotes, panels and plenty of slides.",
+      "prompt": "How useful were the main stage sessions for your work?"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "options": [
+        "Very easy",
+        "Fairly easy",
+        "Fairly hard",
+        "Very hard",
+        "I didn't try to network"
+      ],
+      "roundTitle": "The Hallway Track",
+      "hostLine": "Round three leaves the sessions behind and heads into the corridors.",
+      "prompt": "How easy was it to meet and talk with other attendees?"
+    },
+    {
+      "id": "q4",
+      "type": "choice",
+      "options": [
+        "Keynotes",
+        "Workshops",
+        "Panel discussions",
+        "Networking breaks",
+        "The expo hall"
+      ],
+      "roundTitle": "Crowd Favourites",
+      "hostLine": "Time to look at the whole programme at once.",
+      "prompt": "Which part of the summit was most valuable to you?"
+    },
+    {
+      "id": "q5",
+      "type": "text",
+      "optional": true,
+      "roundTitle": "The Open Mic",
+      "hostLine": "The microphone is yours for this one. Say as much or as little as you like.",
+      "prompt": "What should we change for next year's summit?"
+    },
+    {
+      "id": "q6",
+      "type": "nps",
+      "labels": [
+        "Not at all likely",
+        "Extremely likely"
+      ],
+      "roundTitle": "The Grand Finale",
+      "hostLine": "Our final round of the night. One last question before the confetti.",
+      "prompt": "How likely are you to recommend Brightline Summit to a colleague?"
+    }
+  ],
+  "ending": "That's our show! Every answer you gave tonight goes to the Brightline team planning next year's summit. Thanks for playing, and good night!"
+}

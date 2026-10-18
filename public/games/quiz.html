@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Game Show Survey</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Rubik:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --head-font:"Bungee",Impact,sans-serif; --body-font:"Rubik",system-ui,sans-serif; --on-accent:#FFFFFF;
+  --wall:#FFF4E2; --floor:#F1DDBE; --on-wall:#1B1A2E; --on-wall-soft:#4A4866;
+  --card:#FFFFFF; --ink:#1B1A2E; --ink-soft:#4A4866; --tint:#F3EFFF; --line:#E4DFF2;
+  --panel:#17162C; --panel-edge:#2C2A4A; --led:#FFC94A; --panel-text:#D9D5F2; --lamp-off:#3A3858;
+  --focus:#1F5FA8;
+  --hot:#3D7BFF; --hot-deep:#1F4BAE; --cool:#34D1C9; --gold:#FFD23F; --stripe:rgba(61,123,255,.07);
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){ --wall:#14122B; --floor:#1D1A3B; --on-wall:#F4F1FF; --on-wall-soft:#C9C4E8; }
+}
+:root[data-theme="dark"]{ --wall:#14122B; --floor:#1D1A3B; --on-wall:#F4F1FF; --on-wall-soft:#C9C4E8; }
+.pal-sunset{--hot:#FF6B4A; --hot-deep:#B3341C; --cool:#FFB347; --gold:#FFD166; --stripe:rgba(255,107,74,.08);}
+.pal-electric{--hot:#3D7BFF; --hot-deep:#1F4BAE; --cool:#34D1C9; --gold:#FFD23F; --stripe:rgba(61,123,255,.08);}
+.pal-retro{--hot:#E4572E; --hot-deep:#A6261A; --cool:#29A19C; --gold:#F3C623; --stripe:rgba(41,161,156,.09);}
+.pal-mint{--hot:#2EC4B6; --hot-deep:#0B6E66; --cool:#FF9F1C; --gold:#FFD166; --stripe:rgba(46,196,182,.1);}
+/* Business setting: the studio is dressed in the setting's colours, with bunting across the top */
+:root[data-setting]{ --wall:var(--set-bg-now); --floor:var(--set-floor-now); }
+/* Whole-game colour palette picked in the Game Editor (core/scenes.js); the scoreboard and marquee take its deep shade */
+:root[data-palette]{ --wall:var(--pal-bg-now); --floor:var(--pal-floor-now); --on-wall:var(--pal-on-bg-now); --on-wall-soft:var(--pal-on-bg-now);
+  --card:var(--pal-surface); --ink:var(--pal-ink); --ink-soft:var(--pal-ink-soft); --tint:var(--pal-tint); --line:var(--pal-line);
+  --panel:var(--pal-deep); --panel-edge:var(--pal-deep-edge); --panel-text:var(--pal-on-deep); --led:var(--pal-glow); --lamp-off:var(--pal-deep-edge);
+  --on-accent:var(--pal-on-accent); }
+:root[data-palette] .studio{ --hot:var(--pal-accent); --hot-deep:var(--pal-accent); --cool:var(--pal-accent-2); --gold:var(--pal-glow); --stripe:var(--pal-dot-now); }
+:root[data-setting] .studio{ --stripe:var(--set-dot-now); }
+:root[data-setting] .studio .wrap{padding-top:44px;}
+:root[data-setting] .studio::before{content:""; position:absolute; top:0; left:0; right:0; height:34px; z-index:1; pointer-events:none;
+  background:var(--set-bunting) repeat-x 0 0 / 96px 34px;}
+html{height:100%;}
+*,*::before,*::after{box-sizing:inherit;}
+body{margin:0; min-height:100%; background:var(--wall); color:var(--ink); font-family:var(--body-font); font-size:17px; line-height:1.55;}
+.studio{
+  position:relative; min-height:100vh; overflow:hidden;
+  background:
+    linear-gradient(to bottom, transparent 70%, var(--floor) 70%),
+    repeating-linear-gradient(90deg, var(--stripe) 0 38px, transparent 38px 76px),
+    var(--wall);
+}
+.lights{position:absolute; inset:0 0 auto 0; height:520px; pointer-events:none; z-index:0;}
+.lights span{position:absolute; top:-40px; width:260px; height:560px; transform-origin:50% 0;
+  background:linear-gradient(to bottom, rgba(255,240,190,.55), rgba(255,240,190,0) 85%);
+  clip-path:polygon(44% 0, 56% 0, 100% 100%, 0 100%); opacity:.6;}
+.lights span:nth-child(1){left:4%; transform:rotate(-16deg);}
+.lights span:nth-child(2){right:4%; transform:rotate(16deg);}
+.studio.cheer .lights span{animation:sweep 1.3s ease-in-out;}
+@keyframes sweep{0%,100%{opacity:.6;} 50%{opacity:1; filter:brightness(1.2);} 30%{transform:rotate(0deg);} }
+.wrap{position:relative; z-index:1; max-width:860px; margin:0 auto; padding:20px 16px 48px;}
+
+.marquee{
+  position:relative; background:var(--panel); color:var(--gold); border-radius:14px; padding:16px 20px 14px; text-align:center;
+  box-shadow:0 10px 24px rgba(10,8,30,.35), inset 0 0 0 3px var(--panel-edge);
+}
+.marquee::before{content:""; position:absolute; inset:6px; border-radius:10px; pointer-events:none; border:5px dotted var(--gold); opacity:.8;}
+.marquee .company{display:block; font-size:14px; letter-spacing:.12em; text-transform:uppercase; color:var(--panel-text);}
+.marquee h1{font-family:var(--head-font); font-weight:400; font-size:clamp(28px,7vw,48px); line-height:1.05; margin:4px 0 2px; color:var(--gold); text-shadow:0 0 18px rgba(255,201,74,.45);}
+.marquee .episode{font-size:16px; color:var(--panel-text);}
+
+.board{display:grid; grid-template-columns:auto 1fr; gap:12px 18px; align-items:center; margin:14px 0 18px; padding:12px 16px;
+  background:var(--panel); border-radius:12px; box-shadow:inset 0 0 0 3px var(--panel-edge); color:var(--panel-text);}
+.cap{display:block; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--panel-text);}
+.digits{font-family:"Bungee",Impact,sans-serif; font-size:40px; line-height:1; color:var(--led); text-shadow:0 0 14px rgba(255,201,74,.55); letter-spacing:.04em;}
+.lamps{list-style:none; margin:6px 0 0; padding:0; display:flex; flex-wrap:wrap; gap:8px;}
+.lamp{width:20px; height:20px; border-radius:50%; background:var(--lamp-off); box-shadow:inset 0 0 0 2px var(--panel-edge);}
+.lamp.on{background:var(--gold); box-shadow:0 0 10px var(--gold), inset 0 0 0 2px rgba(0,0,0,.15);}
+.lamp.now{box-shadow:0 0 0 3px var(--cool), inset 0 0 0 2px var(--panel-edge);}
+.applause{grid-column:1 / -1; justify-self:center; font-family:var(--head-font); font-size:15px; letter-spacing:.18em; padding:4px 14px; border-radius:6px; background:#24223F; color:#A09CC4; transition:background .2s,color .2s;}
+.applause.on{background:#CC2A21; color:#FFFFFF; box-shadow:0 0 22px rgba(226,52,43,.7); animation:flash .5s steps(2) 3;}
+@keyframes flash{50%{background:#9E1F18;}}
+:root[data-palette] .applause{background:var(--pal-deep-edge); color:var(--pal-on-deep);}
+:root[data-palette] .applause.on{background:var(--pal-accent); color:var(--pal-on-accent); box-shadow:0 0 22px var(--pal-accent); animation-name:palFlash;}
+@keyframes palFlash{50%{opacity:.7;}}
+
+.segment{display:grid; gap:14px;}
+.host-row{display:flex; gap:12px; align-items:flex-end;}
+.host-row svg{flex:none; width:92px; height:122px;}
+.bubble{position:relative; margin:0 0 20px; background:var(--card); color:var(--ink); border-radius:16px; padding:12px 16px; box-shadow:0 6px 16px rgba(20,16,50,.18); max-width:52ch;}
+.bubble::before{content:""; position:absolute; left:-9px; bottom:16px; border:10px solid transparent; border-right-color:var(--card); border-left:0;}
+.bubble b{color:var(--hot-deep);}
+.card{background:var(--card); color:var(--ink); border-radius:18px; padding:22px 20px 22px; box-shadow:0 2px 0 rgba(0,0,0,.06), 0 14px 30px rgba(20,16,50,.22);}
+.round-tag{font-size:14px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-soft); margin:0;}
+.round-title{display:inline-block; font-family:var(--head-font); font-weight:400; font-size:clamp(20px,5vw,26px); line-height:1.15; margin:6px 0 14px; padding:6px 14px; background:var(--hot-deep); color:var(--on-accent); border-radius:8px; transform:skew(-6deg);}
+.round-title span{display:inline-block; transform:skew(6deg);}
+.prompt{font-size:21px; font-weight:700; line-height:1.4; margin:0 0 16px;}
+.card p{max-width:62ch;}
+.intro p{margin:0 0 12px;}
+
+.opts{display:grid; gap:10px;}
+.scale{display:flex; flex-wrap:wrap; gap:8px;}
+.scale-labels{display:flex; justify-content:space-between; gap:12px; font-size:15px; color:var(--ink-soft); margin-top:6px;}
+button{font:inherit; color:inherit; cursor:pointer;}
+.opt,.scale button{background:#FFFFFF; border:2px solid var(--ink); border-radius:999px; padding:11px 18px; text-align:left; font-weight:500;}
+.scale button{width:48px; height:48px; padding:0; text-align:center; border-radius:50%; font-weight:700;}
+.opt:hover,.scale button:hover{background:var(--tint);}
+.opt[aria-pressed="true"],.scale button[aria-pressed="true"]{background:var(--hot-deep); border-color:var(--hot-deep); color:var(--on-accent);}
+textarea{width:100%; min-height:110px; font:inherit; color:var(--ink); background:#FFFFFF; border:2px solid var(--ink); border-radius:14px; padding:10px 12px;}
+.actions{display:flex; gap:12px; flex-wrap:wrap; margin-top:18px; align-items:center;}
+.primary{font-family:var(--head-font); letter-spacing:.04em; background:var(--hot-deep); color:var(--on-accent); border:none; border-radius:999px; padding:13px 26px; box-shadow:0 4px 0 rgba(0,0,0,.28);}
+.primary:active{transform:translateY(2px); box-shadow:0 2px 0 rgba(0,0,0,.28);}
+.primary:disabled{opacity:.4; cursor:not-allowed;}
+.ghost{background:none; border:none; text-decoration:underline; padding:8px 4px; color:var(--ink-soft);}
+:focus-visible{outline:3px solid var(--focus); outline-offset:3px;}
+[tabindex="-1"]:focus{outline:none;}
+
+.points{display:flex; align-items:center; gap:14px; margin:4px 0 6px; padding:14px 16px; border-radius:14px; background:var(--tint);}
+.points strong{font-family:var(--head-font); font-weight:400; font-size:40px; line-height:1; color:var(--hot-deep);}
+.points span{font-weight:500;}
+.finale h2{font-family:var(--head-font); font-weight:400; font-size:clamp(28px,7vw,40px); margin:0 0 6px; color:var(--hot-deep);}
+.final-score{font-family:"Bungee",Impact,sans-serif; font-size:56px; line-height:1; color:var(--ink); margin:6px 0 2px;}
+.summary{margin:16px 0 0; padding:0; list-style:none;}
+.summary li{padding:8px 0; border-bottom:1px solid var(--line);}
+.summary small{display:block; color:var(--ink-soft); font-size:15px;}
+details{margin-top:14px;}
+summary{cursor:pointer; font-weight:700;}
+pre{overflow-x:auto; background:var(--tint); padding:12px; font-size:13px; border-radius:8px; white-space:pre;}
+
+.confetti{position:fixed; inset:0; pointer-events:none; z-index:5; overflow:hidden;}
+.confetti i{position:absolute; top:-20px; width:9px; height:14px; border-radius:2px; animation:fall linear forwards;}
+@keyframes fall{to{transform:translate3d(var(--drift),110vh,0) rotate(var(--spin));}}
+.sr-only{position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;}
+
+@media (min-width:760px){
+  .board{grid-template-columns:auto 1fr auto;}
+  .applause{grid-column:auto;}
+  .host-row svg{width:120px; height:160px;}
+}
+@media (prefers-reduced-motion: reduce){ *{animation:none !important; transition:none !important;} .confetti{display:none;} }
+</style>
+<link rel="stylesheet" href="core/scenes.css">
+</head>
+<body>
+<div class="studio" id="studio">
+  <div class="lights" aria-hidden="true"><span></span><span></span></div>
+  <div class="wrap">
+    <header class="marquee">
+      <span class="company" id="company"></span>
+      <h1 id="showName"></h1>
+      <span class="episode" id="episode"></span>
+    </header>
+    <section class="board" id="board" aria-label="Scoreboard">
+      <div><span class="cap" id="pointsCap">Points</span><span class="digits" id="score">0000</span></div>
+      <div><span class="cap" id="roundsCap">Rounds</span><ol class="lamps" id="lamps"></ol></div>
+      <div class="applause" id="applause" aria-hidden="true">Applause</div>
+    </section>
+    <main id="stage"></main>
+  </div>
+  <p class="sr-only" id="announce" aria-live="polite"></p>
+</div>
+
+<script src="core/firebase-config.js"></script>
+<script src="core/validators.js"></script>
+<script src="core/qp.js"></script>
+<script src="core/i18n.js"></script>
+<script src="core/firestore.js"></script>
+<script src="core/rewards.js"></script>
+<script src="core/voice.js"></script>
+<script src="core/scenes.js"></script>
+<script src="core/banners.js"></script>
+<script src="samples/quiz.js"></script>
+<script src="quiz.js"></script>
+</body>
+</html>

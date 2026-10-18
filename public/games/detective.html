@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Case File: Detective Survey Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --head-font:"Alfa Slab One",Georgia,serif; --body-font:"Courier Prime","Courier New",Courier,monospace; --on-accent:#fff;
+  --cork:#C59B6D; --cork-dot:#A97F52; --card:#FFFDF7; --rule:#B9CDE4; --margin:#D9534F;
+  --ink:#1E2A3A; --ink-soft:#4A5668; --stamp:#B3261E; --pin:#2F6B4F; --on-cork:#2A1C10;
+  --slot:#E9D6BC;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --cork:#3B2B1D; --cork-dot:#2C1F14; --card:#EFE6D4; --rule:#A9BCD2; --on-cork:#F6EAD6; --slot:#4A3726;
+  }
+}
+:root[data-theme="dark"]{
+  --cork:#3B2B1D; --cork-dot:#2C1F14; --card:#EFE6D4; --rule:#A9BCD2; --on-cork:#F6EAD6; --slot:#4A3726;
+}
+/* Business setting: wallpaper and colours from core/scenes.js replace the cork board */
+:root[data-setting]{ --cork:var(--set-bg-now); --cork-dot:var(--set-dot-now); --on-cork:var(--set-ink-now); --slot:var(--set-slot-now); --pin:var(--set-accent); }
+/* Whole-game colour palette picked in the Game Editor (core/scenes.js) */
+:root[data-palette]{ --cork:var(--pal-bg-now); --cork-dot:var(--pal-dot-now); --on-cork:var(--pal-on-bg-now); --slot:var(--pal-slot-now);
+  --card:var(--pal-surface); --ink:var(--pal-ink); --ink-soft:var(--pal-ink-soft); --rule:var(--pal-line); --margin:var(--pal-accent-2);
+  --stamp:var(--pal-accent); --on-accent:var(--pal-on-accent); --pin:var(--pal-accent); }
+html{height:100%; scroll-padding-top:env(safe-area-inset-top,0px);}
+*,*::before,*::after{box-sizing:inherit;}
+body{
+  margin:0; min-height:100%;
+  background-color:var(--cork);
+  background-image:radial-gradient(var(--cork-dot) 1px, transparent 1.6px), radial-gradient(var(--cork-dot) 1px, transparent 1.6px);
+  background-size:14px 14px, 22px 22px; background-position:0 0, 7px 11px;
+  font-family:var(--body-font);
+  color:var(--ink); font-size:17px; line-height:1.55;
+}
+.wrap{max-width:720px; margin:0 auto; padding:20px 16px 40px;}
+header.case{color:var(--on-cork); margin-bottom:18px;}
+header.case .num{font-size:14px; opacity:.85;}
+header.case h1{font-family:var(--head-font); font-weight:400; font-size:clamp(26px,6vw,40px); line-height:1.1; margin:4px 0 0;}
+
+.card{
+  position:relative; background:var(--card); border-radius:3px; padding:44px 22px 24px 40px;
+  background-image:linear-gradient(to right, transparent 26px, var(--margin) 26px, var(--margin) 27px, transparent 27px),
+    repeating-linear-gradient(to bottom, transparent 0, transparent 27px, var(--rule) 27px, var(--rule) 28px);
+  background-position:0 0, 0 16px;
+  box-shadow:0 2px 0 rgba(0,0,0,.12), 0 10px 24px rgba(40,20,0,.28);
+  transform:rotate(-.4deg);
+}
+.card::before{ /* pushpin */
+  content:""; position:absolute; top:12px; left:50%; width:16px; height:16px; margin-left:-8px; border-radius:50%;
+  background:radial-gradient(circle at 35% 35%, #6fae8c, var(--pin) 60%); box-shadow:0 2px 3px rgba(0,0,0,.35);
+}
+.witness{display:flex; gap:12px; align-items:center; margin-bottom:10px;}
+.badge{flex:none; width:44px; height:44px; border-radius:50%; border:2px solid var(--ink); display:grid; place-items:center; font-weight:700; font-size:18px;}
+.witness b{display:block; font-size:18px;}
+.witness span{color:var(--ink-soft); font-size:15px;}
+.setup{font-style:italic; color:var(--ink-soft); margin:8px 0 14px;}
+.prompt{font-size:20px; font-weight:700; line-height:1.4; margin:0 0 16px;}
+.intro p{margin:0 0 12px; max-width:60ch;}
+
+.opts{display:grid; gap:10px;}
+.scale{display:flex; flex-wrap:wrap; gap:8px;}
+.scale button{width:46px; height:46px;}
+.scale-labels{display:flex; justify-content:space-between; font-size:14px; color:var(--ink-soft); margin-top:6px; max-width:100%;}
+button{font:inherit; color:inherit; cursor:pointer;}
+.opt, .scale button{
+  background:transparent; border:2px solid var(--ink); border-radius:3px; padding:10px 14px; text-align:left;
+}
+.opt[aria-pressed="true"], .scale button[aria-pressed="true"]{background:var(--ink); color:var(--card);}
+.scale button{text-align:center; padding:0;}
+textarea{width:100%; min-height:110px; font:inherit; color:var(--ink); background:rgba(255,255,255,.55); border:2px solid var(--ink); border-radius:3px; padding:10px;}
+.actions{display:flex; gap:12px; flex-wrap:wrap; margin-top:18px; align-items:center;}
+.primary{background:var(--stamp); color:var(--on-accent); border:none; border-radius:3px; padding:12px 20px; font-weight:700;}
+.qp-voice .qp-voice-btn{border-radius:3px;}
+.primary:disabled{opacity:.4; cursor:not-allowed;}
+.ghost{background:none; border:none; text-decoration:underline; padding:8px 4px; color:var(--ink-soft);}
+:focus-visible{outline:3px solid #2B6CB0; outline-offset:3px;}
+[tabindex="-1"]:focus{outline:none;}
+
+.evidence{margin-top:16px; border:2px dashed var(--stamp); padding:14px; border-radius:3px; background:rgba(179,38,30,.06);}
+:root[data-palette] .evidence{background:var(--pal-tint);}
+.evidence h3{margin:0 0 6px; font-size:16px; color:var(--stamp);}
+
+.board{margin-top:26px; color:var(--on-cork);}
+.board h2{font-family:var(--head-font); font-weight:400; font-size:20px; margin:0 0 10px;}
+.slots{display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:12px;}
+.slot{min-height:92px; border:2px dashed var(--on-cork); opacity:.55; border-radius:3px; display:grid; place-items:center; font-size:28px; background:var(--slot);}
+.slot.found{opacity:1; border:none; background:var(--card); color:var(--ink); font-size:14px; line-height:1.4; padding:22px 12px 12px; place-items:start; position:relative; box-shadow:0 6px 14px rgba(40,20,0,.3);}
+.slot.found:nth-child(odd){transform:rotate(1.2deg);} .slot.found:nth-child(even){transform:rotate(-1deg);}
+.slot.found::before{content:""; position:absolute; top:6px; left:50%; width:12px; height:12px; margin-left:-6px; border-radius:50%; background:var(--stamp);}
+.slot.fresh{animation:pin .45s ease-out;}
+@keyframes pin{from{transform:translateY(-14px) scale(1.06); opacity:0;} to{opacity:1;}}
+
+.stamp{
+  position:absolute; right:18px; top:30px; font-family:var(--head-font); color:var(--stamp);
+  border:4px solid var(--stamp); padding:4px 12px; font-size:clamp(20px,5vw,30px); transform:rotate(-12deg); opacity:.85;
+  animation:thud .5s cubic-bezier(.2,1.6,.4,1) both;
+}
+/* Leaves room under "Solved." so the rotated stamp never lands on the detective's closing words */
+.prompt.solved{margin-bottom:44px;}
+@keyframes thud{from{transform:rotate(-12deg) scale(2.4); opacity:0;} to{transform:rotate(-12deg) scale(1); opacity:.85;}}
+.summary{margin:16px 0 0; padding:0; list-style:none;}
+.summary li{padding:8px 0; border-bottom:1px solid var(--rule);}
+.summary small{display:block; color:var(--ink-soft);}
+details{margin-top:14px;}
+summary{cursor:pointer; font-weight:700;}
+pre{overflow-x:auto; background:rgba(30,42,58,.08); padding:12px; font-size:13px; border-radius:3px; white-space:pre;}
+.progress{font-size:15px; margin-top:6px;}
+.detective{display:flex; gap:16px; align-items:flex-end; margin-bottom:14px;}
+.detective svg{flex:none; width:96px; height:112px;}
+.detective .who b{display:block; font-family:var(--head-font); font-weight:400; font-size:20px; line-height:1.2;}
+.detective .who span{color:var(--ink-soft); font-size:15px;}
+.quip{font-style:italic; margin:0 0 12px;}
+.note{display:flex; gap:10px; align-items:flex-start; margin-top:14px;}
+.note svg{flex:none; width:48px; height:56px;}
+.note p{margin:0; font-style:italic;}
+@media (prefers-reduced-motion: reduce){ *{animation:none !important; transition:none !important;} }
+</style>
+<link rel="stylesheet" href="core/scenes.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="case">
+    <div class="num" id="caseNum"></div>
+    <h1 id="caseTitle"></h1>
+    <div class="progress" id="progress"></div>
+  </header>
+  <main id="stage"></main>
+  <section class="board" aria-label="Evidence board">
+    <h2>Evidence board</h2>
+    <div class="slots" id="slots"></div>
+  </section>
+</div>
+
+<script src="core/firebase-config.js"></script>
+<script src="core/validators.js"></script>
+<script src="core/qp.js"></script>
+<script src="core/i18n.js"></script>
+<script src="core/firestore.js"></script>
+<script src="core/rewards.js"></script>
+<script src="core/voice.js"></script>
+<script src="core/scenes.js"></script>
+<script src="core/banners.js"></script>
+<script src="samples/detective.js"></script>
+<script src="detective.js"></script>
+</body>
+</html>

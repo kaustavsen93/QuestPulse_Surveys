@@ -1,0 +1,65 @@
+/* Shared styles for business-setting scenery (core/scenes.js). Each game adds its own [data-setting] colours. */
+.scene-banner{
+  position:relative; height:clamp(120px,24vw,190px); margin:0 0 16px; overflow:hidden;
+  border:3px solid #3A2618; border-radius:12px; background:#FBEBDD; box-shadow:0 8px 20px rgba(40,20,0,.22);
+}
+.scene-banner svg{display:block; width:100%; height:100%;}
+/* Supporting-character portraits replace the initial badge when the AI gives an outfit */
+.portrait{flex:none; width:52px; height:52px;}
+.portrait svg{display:block; width:100%; height:100%;}
+
+/* Setting colours: QP.scenes.apply sets --set-* (light) and --set-*-d (dark); these pick the right one for the page.
+   Each game maps the -now values onto its own variables. */
+:root[data-setting]{ --set-bg-now:var(--set-bg); --set-dot-now:var(--set-dot); --set-ink-now:var(--set-ink); --set-slot-now:var(--set-slot); --set-floor-now:var(--set-floor); }
+@media (prefers-color-scheme: dark){
+  :root[data-setting]:not([data-theme="light"]){ --set-bg-now:var(--set-bg-d); --set-dot-now:var(--set-dot-d); --set-ink-now:var(--set-ink-d); --set-slot-now:var(--set-slot-d); --set-floor-now:var(--set-floor-d); }
+}
+:root[data-setting][data-theme="dark"]{ --set-bg-now:var(--set-bg-d); --set-dot-now:var(--set-dot-d); --set-ink-now:var(--set-ink-d); --set-slot-now:var(--set-slot-d); --set-floor-now:var(--set-floor-d); }
+:root[data-setting] body{ background-image:var(--set-pattern); background-size:var(--set-pattern-size); background-position:0 0; }
+
+/* Whole-game colour palette (QP.scenes.apply sets --pal-*): the -now values follow light or dark mode, like the setting colours. */
+:root[data-palette]{ --pal-bg-now:var(--pal-bg); --pal-dot-now:var(--pal-dot); --pal-on-bg-now:var(--pal-on-bg); --pal-slot-now:var(--pal-slot); --pal-floor-now:var(--pal-floor); }
+@media (prefers-color-scheme: dark){
+  :root[data-palette]:not([data-theme="light"]){ --pal-bg-now:var(--pal-bg-d); --pal-dot-now:var(--pal-dot-d); --pal-on-bg-now:var(--pal-on-bg-d); --pal-slot-now:var(--pal-slot-d); --pal-floor-now:var(--pal-floor-d); }
+}
+:root[data-palette][data-theme="dark"]{ --pal-bg-now:var(--pal-bg-d); --pal-dot-now:var(--pal-dot-d); --pal-on-bg-now:var(--pal-on-bg-d); --pal-slot-now:var(--pal-slot-d); --pal-floor-now:var(--pal-floor-d); }
+
+/* Fonts: every game draws its text in --head-font and --body-font. Hindi swaps both for a Devanagari font (loaded by
+   core/i18n.js); a font picked in the Game Editor (QP.fonts) replaces either one, and each of those has Devanagari too. */
+:root[lang="hi"]{ --hi-font:"Hind", "Kohinoor Devanagari", "Nirmala UI", "Noto Sans Devanagari", sans-serif; --head-font:var(--hi-font); --body-font:var(--hi-font); }
+/* Letter spacing breaks Devanagari conjuncts apart */
+:root[lang="hi"] body *{ letter-spacing:normal !important; }
+
+/* Reward card at the end of a published survey (core/rewards.js). Uses the game's own button styles. */
+.qp-reward{margin-top:18px; padding:16px 18px; border-radius:12px; background:#FFFFFF; color:#1E2A3A; border:2px solid #1E2A3A22; box-shadow:0 6px 16px rgba(0,0,0,.12);}
+.qp-reward-coupon{border:2px dashed #C0392B; background:#FFF8F0;}
+.qp-reward-error{border-color:#B3261E;}
+.qp-reward h3{margin:2px 0 4px; font-size:22px; line-height:1.25;}
+.qp-reward-kicker{margin:0; font-size:13px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:#8E2C1B;}
+.qp-reward-detail{margin:0 0 10px; color:#4A5668;}
+.qp-reward-note{margin:8px 0 0; font-size:15px; color:#4A5668;}
+.qp-reward-note a{color:inherit;}
+.qp-reward-actions:not(:empty){margin-top:12px;}
+:root[data-palette] .qp-reward{background:var(--pal-surface); color:var(--pal-ink);}
+:root[data-palette] .qp-reward-coupon{border-color:var(--pal-accent);}
+:root[data-palette] .qp-reward-kicker{color:var(--pal-accent);}
+:root[data-palette] :is(.qp-reward-detail, .qp-reward-note){color:var(--pal-ink-soft);}
+.qp-code-row{display:flex; flex-wrap:wrap; align-items:center; gap:10px;}
+.qp-code{font:700 22px/1 ui-monospace, "SF Mono", Menlo, Consolas, monospace; letter-spacing:.08em; padding:10px 14px; border-radius:8px; background:#1E2A3A; color:#FFFFFF; user-select:all;}
+
+/* Voice notes on text questions (core/voice.js). Colours come from each game's --ink and --ink-soft. */
+.qp-voice{display:flex; flex-wrap:wrap; align-items:center; gap:10px 14px; margin:0 0 12px;}
+.qp-voice-btn{
+  display:inline-flex; align-items:center; gap:8px; min-height:48px; padding:10px 20px; font:inherit; font-weight:700;
+  color:var(--ink); background:transparent; border:2px solid var(--ink); border-radius:999px; cursor:pointer;
+}
+.qp-voice-btn svg{width:22px; height:22px; flex:none;}
+.qp-voice-btn[data-recording]{color:#FFFFFF; background:#B3261E; border-color:#B3261E;}
+.qp-voice-btn:disabled{opacity:.45; cursor:not-allowed;}
+.qp-voice-dot{width:12px; height:12px; flex:none; border-radius:50%; background:currentColor; animation:qp-voice-pulse 1.1s ease-in-out infinite;}
+.qp-voice > .qp-voice-dot{color:#B3261E;}
+.qp-voice-note{flex:1 1 220px; margin:0; font-size:15px; line-height:1.4; color:var(--ink-soft);}
+.qp-voice audio{flex:1 1 100%; width:100%; max-width:380px; height:44px;}
+.qp-voice-row{display:flex; flex-wrap:wrap; align-items:center; gap:8px 12px;}
+@keyframes qp-voice-pulse{50%{opacity:.35;}}
+@media (prefers-reduced-motion: reduce){ .qp-voice-dot{animation:none;} }
