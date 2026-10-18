@@ -1,0 +1,8 @@
+# Files Cloud Run doesn't need when it builds the app from source.
+# Hidden files and folders: git, editor settings and the local .env with API keys.
+.*
+node_modules/
+data/
+tests/
+reference/
+*.md
